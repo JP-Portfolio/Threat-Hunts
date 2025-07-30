@@ -149,11 +149,11 @@ DeviceNetworkEvents
 ## MITRE ATT&CK Mapping
 The detected activities align with the following MITRE ATT&CK tactics and techniques:
 
-- **Tactic**: Command and Control (TA0011)
-  - **Technique**: T1071 - Application Layer Protocol
+- **Tactic**: `Command and Control (TA0011)`
+  - **Technique**: `T1071 - Application Layer Protocol`
   - **Description**: The use of the TOR browser to establish connections to remote IP addresses (e.g., `80.85.141.186` on port `9001`) indicates encrypted communication over application layer protocols to evade network monitoring.
-- **Tactic**: Execution (TA0002)
-  - **Technique**: T1204.002 - User Execution: Malicious File
+- **Tactic**: `Execution (TA0002)`
+  - **Technique**: `T1204.002 - User Execution: Malicious File`
   - **Description**: The user "jay" executed the TOR installer (`tor-browser-windows-x86_64-portable-14.5.5.exe`) via a silent installation, indicating user-initiated execution of a potentially unauthorized application.
 
 ---
