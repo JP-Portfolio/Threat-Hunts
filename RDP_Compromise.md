@@ -20,6 +20,7 @@
 ### KQL Queries Used:  
 
 #### Query 1 - Initial Access Detection:
+```kql
 DeviceLogonEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-14T00:00:00Z)
@@ -27,12 +28,13 @@ DeviceLogonEvents
 | where ActionType in ("LogonSuccess", "LogonFailed")
 | project Timestamp, DeviceName, ActionType, AccountName, RemoteIP, LogonType
 | order by Timestamp asc
-
+```
 **Results:**  
 - Revealed multiple failed logins from 159.26.106.84, followed by successful login as slflare on Sep 16, 2025 3:43:46 PM.  
 <img width="1179" height="533" alt="Screenshot 2025-09-21 192602" src="https://github.com/user-attachments/assets/a1ed025f-dc9a-4432-b3d3-035b24027e95" />
 
 #### Query 2 - Malicious Execution:
+```kql
 DeviceProcessEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T16:38:40Z)
@@ -40,12 +42,13 @@ DeviceProcessEvents
 | where FolderPath has_any ("\temp\", "\tmp\", "\public\", "\download", "\downloads\", "%temp%", "%public%")
 | project Timestamp, FileName, ProcessCommandLine, AccountName, FolderPath
 | sort by Timestamp desc
-
+```
 **Results:**  
 - Detected `msupdate.exe` executed with command line `"msupdate.exe" -ExecutionPolicy Bypass -File C:\Users\Public\update_check.ps1` on Sep 16, 2025 4:38:40 PM.  
 <img width="1236" height="526" alt="Screenshot 2025-09-22 164014" src="https://github.com/user-attachments/assets/93c57f75-b725-4458-a930-e2af5a90dba5" />
 
 #### Query 3 - Persistence Detection:
+```kql
 DeviceRegistryEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T16:38:40Z)
@@ -54,12 +57,13 @@ DeviceRegistryEvents
 | extend TaskName = extract(@"TaskCache\Tree\(.+?)(?:\|$)", 1, RegistryKey)
 | project Timestamp, DeviceName, ActionType, TaskName, RegistryKey
 | order by Timestamp asc
-
+```
 **Results:**  
 - Identified scheduled task `MicrosoftUpdateSync` created on Sep 16, 2025 4:39:45 PM.  
 <img width="987" height="554" alt="Screenshot 2025-09-22 164705" src="https://github.com/user-attachments/assets/2a09887b-399b-4109-89ac-2e3a24bef1eb" />
 
 #### Query 4 - Defender Modification:
+```kql
 DeviceRegistryEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T16:39:45Z)
@@ -67,12 +71,13 @@ DeviceRegistryEvents
 | where ActionType in ("RegistryValueSet", "RegistryKeyCreated")
 | project Timestamp, RegistryKey, RegistryValueName, RegistryValueData, ActionType, InitiatingProcessFileName
 | order by Timestamp asc
-
+```
 **Results:**  
 - Defender exclusion added for C:\Windows\Temp on 2025-09-16T19:39:48.704946Z.  
 <img width="1318" height="362" alt="Screenshot 2025-09-22 164714" src="https://github.com/user-attachments/assets/91341b36-1283-4fcf-8e85-c506c1d5fae5" />
 
 #### Query 5 - Discovery Command:
+```kql
 DeviceProcessEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T19:39:48.704946Z)
@@ -80,12 +85,13 @@ DeviceProcessEvents
 | where ProcessCommandLine has_any ("systeminfo", "ipconfig", "netstat", "whoami", "hostname", "tasklist", "net view")
 | project Timestamp, DeviceName, InitiatingProcessAccountName, FileName, ProcessCommandLine, FolderPath
 | order by Timestamp asc
-
+```
 **Results:**  
 - Discovery command `"cmd.exe" /c systeminfo` executed.  
 <img width="1191" height="560" alt="Screenshot 2025-09-22 172438" src="https://github.com/user-attachments/assets/9119f399-0979-4e86-aed1-112aca6e3689" />
 
 #### Query 6 - Archive File Creation:
+```kql
 DeviceFileEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T19:39:48.704946Z)
@@ -94,31 +100,34 @@ DeviceFileEvents
 | where FolderPath has_any ("\Temp\", "\AppData\", "\ProgramData\")
 | project Timestamp, DeviceName, FileName, FolderPath, ActionType, InitiatingProcessFileName
 | order by Timestamp asc
-
+```
 **Results:**  
 - Archive file `backup_sync.zip` created on Sep 16, 2025 4:41:30 PM.  
 <img width="1212" height="508" alt="Screenshot 2025-09-22 173932" src="https://github.com/user-attachments/assets/f5cc9308-fc56-4463-aefc-28dcfd2b2981" />
 
 #### Query 7 - C2 Connection:
+```kql
 DeviceNetworkEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T19:43:20.8733344Z)
 | where InitiatingProcessAccountName == "slflare"
 | project Timestamp, DeviceName, InitiatingProcessFileName, RemoteUrl, RemoteIP, ActionType, InitiatingProcessCommandLine, RemotePort
 | order by Timestamp asc
-
+```
 **Results:**  
 - C2 connection to 185.92.220.87 on Sep 16, 2025 4:43:42 PM.
  <img width="1148" height="560" alt="Screenshot 2025-10-15 121015" src="https://github.com/user-attachments/assets/2e3c8701-0174-4309-9133-f6b29c31a49d" />
  
 #### Query 8 - Exfiltration Attempt:
+```kql
 DeviceNetworkEvents
 | where DeviceName contains "flare"
 | where Timestamp >= datetime(2025-09-16T19:43:20.8733344Z)
 | where InitiatingProcessAccountName == "slflare"
 | project Timestamp, DeviceName, InitiatingProcessFileName, RemoteUrl, RemoteIP, ActionType, InitiatingProcessCommandLine, RemotePort
 | order by Timestamp asc
-text**Results:**  
+```
+**Results:**  
 - Exfiltration to 185.92.220.87:8081.
 <img width="1251" height="561" alt="Screenshot 2025-09-22 175028" src="https://github.com/user-attachments/assets/e323cb98-6c4b-488a-b98c-35ac1e332785" />
 
