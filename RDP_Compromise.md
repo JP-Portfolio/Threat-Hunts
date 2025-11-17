@@ -3,7 +3,7 @@
 #### RDP Compromise Incident
 
 **Report ID:** INC-2025-XXXX  
-**Analyst:** JP (Assisted by Grok xAI)  
+**Analyst:** Jay Patel 
 **Date:** October 15, 2025  
 **Incident Date:** September 14, 2025  
 
@@ -200,6 +200,6 @@ DeviceNetworkEvents
   - Conduct regular audits of scheduled tasks and Defender exclusions.  
 
 - **Enhancements:**  
-  - Deploy advanced endpoint detection tools to identify similar malicious binaries (e.g., msupdate.exe).  
+  - Deploy advanced endpoint detection tools to identify similar malicious binaries.  
   - Train staff on recognizing phishing or social engineering attempts that may lead to credential compromise.  
   - Update password policies to enforce complexity and rotation to mitigate brute force risks.
