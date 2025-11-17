@@ -1,6 +1,4 @@
-# SOC Investigation Report Template
-
-#### RDP Compromise Incident
+### RDP Compromise Incident
 
 **Report ID:** INC-2025-XXXX  
 **Analyst:** Jay Patel  
