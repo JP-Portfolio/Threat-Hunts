@@ -3,7 +3,7 @@
 #### RDP Compromise Incident
 
 **Report ID:** INC-2025-XXXX  
-**Analyst:** Jay Patel
+**Analyst:** Jay Patel  
 **Date:** October 15, 2025  
 **Incident Date:** September 14, 2025  
 
